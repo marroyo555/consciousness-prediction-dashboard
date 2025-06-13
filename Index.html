@@ -1,0 +1,108 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Timeline Outcome Simulator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: #fff;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #111;
+      padding: 20px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .container {
+      padding: 20px;
+      max-width: 800px;
+      margin: auto;
+    }
+    .input-box, .result-box {
+      margin-top: 30px;
+      padding: 20px;
+      background-color: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+    }
+    input, button, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 16px;
+      border-radius: 6px;
+      border: none;
+    }
+    button {
+      background-color: #28a745;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+    .timeline {
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+  <header>🧠 Timeline Outcome Predictor v1.0</header>
+  <div class="container">
+    <div class="input-box">
+      <h3>Enter Event Keywords</h3>
+      <textarea id="eventInput" rows="4" placeholder="Example: protest, Trump, ICE, 6/14/25, energy shift"></textarea>
+      <button onclick="predictTimelines()">Run Prediction</button>
+    </div>
+    <div id="result" class="result-box"></div>
+  </div>  <script>
+    function predictTimelines() {
+      const input = document.getElementById("eventInput").value.toLowerCase();
+      const output = document.getElementById("result");
+      output.innerHTML = "";
+
+      if (!input.trim()) {
+        output.innerText = "Please enter event keywords.";
+        return;
+      }
+
+      // Mock AI simulation: generates 3 timeline options with weighted probability
+      const templates = [
+        {
+          title: "⚠️ Timeline A",
+          outcome: "Mass protests escalate. Social unrest triggers national attention. Security forces mobilized. Media narrative fractured.",
+        },
+        {
+          title: "🔮 Timeline B",
+          outcome: "Public outrage shifts to online campaigns. Government moderates stance slightly. Energy disperses digitally.",
+        },
+        {
+          title: "🌀 Timeline C",
+          outcome: "Unexpected third-party steps in (judiciary or global voice). Event diffuses under new pressure. Underlying tensions persist."
+        }
+      ];
+
+      // Random % for simulation realism
+      const percentA = Math.floor(Math.random() * 40 + 40);
+      const percentB = Math.floor((100 - percentA) * Math.random());
+      const percentC = 100 - percentA - percentB;
+      const scores = [percentA, percentB, percentC];
+
+      templates.forEach((t, i) => {
+        const box = document.createElement("div");
+        box.className = "timeline";
+        box.innerHTML = `<strong>${t.title} (${scores[i]}%)</strong><br>${t.outcome}`;
+        output.appendChild(box);
+      });
+
+      output.innerHTML += `<em>⚡ Insight: Energetic conditions or Schumann spikes may cause timeline bifurcation or rapid resonance shifts.</em>`;
+    }
+  </script></body>
+</html>
