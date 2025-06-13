@@ -1,8 +1,8 @@
 <!DOCTYPE html><html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Timeline Outcome Simulator</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prediction + Timeline Simulator</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -20,10 +20,10 @@
     }
     .container {
       padding: 20px;
-      max-width: 800px;
+      max-width: 1000px;
       margin: auto;
     }
-    .input-box, .result-box {
+    .box {
       margin-top: 30px;
       padding: 20px;
       background-color: rgba(255, 255, 255, 0.05);
@@ -45,6 +45,19 @@
     button:hover {
       background-color: #218838;
     }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    th, td {
+      padding: 12px;
+      border: 1px solid #444;
+      text-align: center;
+    }
+    th {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
     .timeline {
       background-color: rgba(255, 255, 255, 0.1);
       padding: 15px;
@@ -54,17 +67,88 @@
   </style>
 </head>
 <body>
-  <header>🧠 Timeline Outcome Predictor v1.0</header>
-  <div class="container">
-    <div class="input-box">
-      <h3>Enter Event Keywords</h3>
-      <textarea id="eventInput" rows="4" placeholder="Example: protest, Trump, ICE, 6/14/25, energy shift"></textarea>
-      <button onclick="predictTimelines()">Run Prediction</button>
-    </div>
-    <div id="result" class="result-box"></div>
+  <header>🧠 Prediction Dashboard + Timeline Simulator</header>
+  <div class="container"><div class="box">
+  <h3>🔍 Keyword-Based Category Prediction</h3>
+  <input id="userInput" placeholder="e.g. protest, Trump, ICE, 6/14/25">
+  <button onclick="runPrediction()">Analyze</button>
+  <div id="categoryResult"></div>
+  <table>
+    <thead>
+      <tr><th>Category</th><th>Accuracy %</th></tr>
+    </thead>
+    <tbody id="accuracyTable"></tbody>
+  </table>
+</div>
+
+<div class="box">
+  <h3>🔮 Timeline Outcome Simulator</h3>
+  <textarea id="eventInput" rows="4" placeholder="e.g. military parade, protest, solar flare, ICE raids"></textarea>
+  <button onclick="predictTimelines()">Simulate Timelines</button>
+  <div id="result"></div>
+</div>
+
   </div>  <script>
+    const rawData = {
+      "Celebrity": 78.9,
+      "Economic": 78.0,
+      "Environmental": 70.9,
+      "Medical": 79.1,
+      "Personal": 78.6,
+      "Political": 78.0,
+      "Spiritual": 80.2,
+      "Technology": 76.4,
+      "Relationship": 77.5,
+      "War/Conflict": 74.8,
+      "Legal/Judicial": 75.9,
+      "Consciousness Shift": 81.0,
+      "Energy/Resonance": 79.4
+    };
+
+    const keywordMap = {
+      "celebrity": ["celebrity", "famous", "scandal", "hollywood"],
+      "economic": ["market", "inflation", "stock", "job"],
+      "environmental": ["earthquake", "storm", "climate"],
+      "medical": ["virus", "pandemic", "hospital"],
+      "personal": ["emotion", "growth", "healing"],
+      "political": ["protest", "trump", "ice", "election"],
+      "spiritual": ["chakra", "meditation", "soul", "ascension"],
+      "technology": ["ai", "robot", "tech", "quantum"],
+      "relationship": ["love", "partner", "breakup"],
+      "war/conflict": ["war", "battle", "troops"],
+      "legal/judicial": ["court", "trial", "justice"],
+      "consciousness shift": ["awakening", "veil", "frequency"],
+      "energy/resonance": ["schumann", "magnetics", "solar"]
+    };
+
+    const accuracyTable = document.getElementById("accuracyTable");
+    for (const [cat, acc] of Object.entries(rawData)) {
+      const row = document.createElement("tr");
+      row.innerHTML = `<td>${cat}</td><td>${acc}%</td>`;
+      accuracyTable.appendChild(row);
+    }
+
+    function runPrediction() {
+      const input = document.getElementById("userInput").value.toLowerCase();
+      const output = document.getElementById("categoryResult");
+      let matched = "";
+      for (let cat in keywordMap) {
+        if (keywordMap[cat].some(k => input.includes(k))) {
+          matched = cat;
+          break;
+        }
+      }
+      if (matched) {
+        const pretty = matched.replace(/_/g, ' ');
+        const accuracy = rawData[Object.keys(rawData).find(c => c.toLowerCase() === matched)];
+        output.innerHTML = `<strong>Predicted Category:</strong> ${pretty}<br><strong>Expected Accuracy:</strong> ${accuracy}%`;
+      } else {
+        output.innerText = "No category matched. Try again.";
+      }
+    }
+
     function predictTimelines() {
-      const input = document.getElementById("eventInput").value.toLowerCase();
+      const input = document.getElementById("eventInput").value;
       const output = document.getElementById("result");
       output.innerHTML = "";
 
@@ -73,36 +157,34 @@
         return;
       }
 
-      // Mock AI simulation: generates 3 timeline options with weighted probability
-      const templates = [
+      const timelines = [
         {
-          title: "⚠️ Timeline A",
-          outcome: "Mass protests escalate. Social unrest triggers national attention. Security forces mobilized. Media narrative fractured.",
+          label: "⚠️ Timeline A",
+          desc: "Mass unrest grows. Protests escalate, invoking federal response. Narrative split between mainstream and grassroots coverage."
         },
         {
-          title: "🔮 Timeline B",
-          outcome: "Public outrage shifts to online campaigns. Government moderates stance slightly. Energy disperses digitally.",
+          label: "🔮 Timeline B",
+          desc: "Digital resistance forms. Grassroots campaigns flood social channels. No physical clash but rising tension."
         },
         {
-          title: "🌀 Timeline C",
-          outcome: "Unexpected third-party steps in (judiciary or global voice). Event diffuses under new pressure. Underlying tensions persist."
+          label: "🌀 Timeline C",
+          desc: "Unexpected resonance event. Solar or geomagnetic activity triggers psychological unity. De-escalation follows."
         }
       ];
 
-      // Random % for simulation realism
-      const percentA = Math.floor(Math.random() * 40 + 40);
-      const percentB = Math.floor((100 - percentA) * Math.random());
-      const percentC = 100 - percentA - percentB;
-      const scores = [percentA, percentB, percentC];
+      const pA = Math.floor(Math.random() * 30 + 45);
+      const pB = Math.floor((100 - pA) * Math.random());
+      const pC = 100 - pA - pB;
+      const probs = [pA, pB, pC];
 
-      templates.forEach((t, i) => {
-        const box = document.createElement("div");
-        box.className = "timeline";
-        box.innerHTML = `<strong>${t.title} (${scores[i]}%)</strong><br>${t.outcome}`;
-        output.appendChild(box);
+      timelines.forEach((t, i) => {
+        const div = document.createElement("div");
+        div.className = "timeline";
+        div.innerHTML = `<strong>${t.label} (${probs[i]}%)</strong><br>${t.desc}`;
+        output.appendChild(div);
       });
 
-      output.innerHTML += `<em>⚡ Insight: Energetic conditions or Schumann spikes may cause timeline bifurcation or rapid resonance shifts.</em>`;
+      output.innerHTML += `<em>⚡ Insight: Schumann spikes or KP ≥ 6 may induce sudden timeline divergence.</em>`;
     }
   </script></body>
 </html>
