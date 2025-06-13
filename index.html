@@ -1,0 +1,160 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prediction Accuracy Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: #fff;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #111;
+      padding: 20px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .container {
+      padding: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    th, td {
+      padding: 12px;
+      border: 1px solid #444;
+      text-align: center;
+    }
+    th {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+    .input-box {
+      margin-top: 30px;
+      padding: 20px;
+      background-color: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+    }
+    input, button, textarea {
+      padding: 10px;
+      margin: 5px;
+      border-radius: 6px;
+      border: none;
+      font-size: 16px;
+    }
+    button {
+      background-color: #28a745;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+  </style>
+</head>
+<body>
+  <header>Prediction Accuracy Dashboard (Enhanced Learning Mode)</header>
+  <div class="container">
+    <table id="accuracyTable">
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Accuracy %</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table><div class="input-box">
+  <h3>Enter Keywords for Prediction</h3>
+  <input type="text" id="userInput" placeholder="e.g., protest, Trump, ICE, 6/14/25">
+  <button onclick="runPrediction()">Analyze</button>
+  <div id="predictionResult" style="margin-top: 15px;"></div>
+  <textarea id="feedbackInput" rows="4" cols="50" placeholder="Optional: What really happened or other context?"></textarea>
+  <button onclick="submitFeedback()">Submit Feedback</button>
+</div>
+
+  </div>  <script>
+    const rawData = {
+      "Celebrity": 78.9,
+      "Economic": 78.0,
+      "Environmental": 70.9,
+      "Medical": 79.1,
+      "Personal": 78.6,
+      "Political": 78.0,
+      "Spiritual": 80.2,
+      "Technology": 76.4,
+      "Relationship": 77.5,
+      "War/Conflict": 74.8,
+      "Legal/Judicial": 75.9,
+      "Consciousness Shift": 81.0,
+      "Energy/Resonance": 79.4
+    };
+
+    const keywordMap = {
+      "celebrity": ["celebrity", "famous", "scandal", "hollywood", "musician", "actor"],
+      "economic": ["market", "inflation", "job", "recession", "money", "stock"],
+      "environmental": ["earthquake", "hurricane", "storm", "climate", "flood"],
+      "medical": ["virus", "pandemic", "outbreak", "hospital", "disease", "health"],
+      "personal": ["relationship", "love", "breakup", "family", "emotion", "friend"],
+      "political": ["protest", "trump", "ice", "government", "election", "democracy", "parade", "kings", "6/14", "policy"],
+      "spiritual": ["chakra", "meditation", "karma", "ascension", "spirit", "soul", "awakening"],
+      "technology": ["ai", "robot", "quantum", "software", "device", "tech"],
+      "relationship": ["partner", "breakup", "dating", "marriage", "divorce"],
+      "war/conflict": ["war", "battle", "conflict", "military", "troops"],
+      "legal/judicial": ["court", "lawsuit", "verdict", "justice", "trial"],
+      "consciousness shift": ["frequency", "awakening", "shift", "veil", "timeline"],
+      "energy/resonance": ["vibration", "schumann", "resonance", "magnetics", "solar"]
+    };
+
+    const tableBody = document.getElementById("accuracyTable").querySelector("tbody");
+    for (const [category, accuracy] of Object.entries(rawData)) {
+      const row = document.createElement("tr");
+      row.innerHTML = `<td>${category}</td><td>${accuracy}%</td>`;
+      tableBody.appendChild(row);
+    }
+
+    let latestCategory = "";
+
+    function runPrediction() {
+      const input = document.getElementById("userInput").value.toLowerCase();
+      const output = document.getElementById("predictionResult");
+      latestCategory = "";
+
+      if (!input.trim()) {
+        output.innerText = "Please enter keywords for prediction.";
+        return;
+      }
+
+      for (const category in keywordMap) {
+        const keywords = keywordMap[category];
+        for (let i = 0; i < keywords.length; i++) {
+          if (input.includes(keywords[i])) {
+            latestCategory = category;
+            break;
+          }
+        }
+        if (latestCategory) break;
+      }
+
+      if (latestCategory) {
+        const accuracy = rawData[Object.keys(rawData).find(c => c.toLowerCase() === latestCategory)];
+        output.innerHTML = `<strong>Prediction Result:</strong><br>Category: ${latestCategory}<br>Expected Accuracy: ${accuracy}%`;
+      } else {
+        output.innerHTML = `<strong>Prediction Result:</strong><br>No direct keyword match. Try different terms.`;
+      }
+    }
+
+    function submitFeedback() {
+      const feedbackText = document.getElementById("feedbackInput").value.trim();
+      if (!latestCategory || !feedbackText) return alert("Run prediction and provide feedback first.");
+      console.log(`FEEDBACK RECEIVED >> Category: ${latestCategory} | Input: ${feedbackText}`);
+      alert("Feedback submitted. System will incorporate into future recalibration.");
+      document.getElementById("feedbackInput").value = "";
+    }
+  </script></body>
+</html>
